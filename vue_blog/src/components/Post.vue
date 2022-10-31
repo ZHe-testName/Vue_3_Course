@@ -3,11 +3,18 @@
     class="post"
   >
     <div>
+      <div>{{ post.id }}</div>
       <div><strong>Name: </strong>{{ post.title }}</div>
       <div><strong>Description: </strong>{{ post.body }}</div>
     </div>
 
     <div class="post_btns">
+      <my-button
+        @click="$emit('remove', post)"
+      >
+        Open
+      </my-button>
+
       <my-button
         @click="$emit('remove', post)"
       >
@@ -36,5 +43,15 @@ export default {
     margin-top: 15px;
     display: flex;
     justify-content: space-between;
+  }
+
+  .post_btns {
+    display: flex;
+    height: 40px;
+    margin-top: 20px;
+  }
+
+  .post_btns > button:first-of-type {
+    margin-right: 10px;
   }
 </style>
