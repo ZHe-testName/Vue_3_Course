@@ -65,6 +65,10 @@
 <script>
 import PostForm from '@/components/PostForm';
 import PostList from '@/components/PostList';
+import usePosts from '@/hooks/usePosts';
+import useSearchedAndSelectedPosts from '@/hooks/useSearchedAndSelectedPosts';
+import useSortedPosts from '@/hooks/useSortedPosts';
+
 import axios from 'axios';
 
 export default {
@@ -74,39 +78,29 @@ export default {
   },
   data() {
     return {
-      posts: [],
       showDialog: false,
-      isPostsLoading: false,
-      selectedSort: '',
-      searchQuery: '',
       page: 1,
       limit: 10,
-      totalPageCount: 0,
       sortOptions: [
         {value: 'title', name: 'by title',},
         {value: 'body', name: 'by body',},
       ],
     };
   },
-  computed: {
-    sortedPosts() {
-      return [...this.posts].sort((p1, p2) =>{
-        return p1[this.selectedSort]?.localeCompare(p2[this.selectedSort]);
-      });
-    },
-    searchedAndSelectedPosts() {
-      return this.sortedPosts.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
-    },
-  },
-  watch: {
-    // page() {
-    //   this.fetchPosts();
-    // },
-    // selectedSort(newValue) {
-    //   this.posts.sort((p1, p2) =>{
-    //     return p1[newValue]?.localeCompare(p2[newValue]);
-    //   });
-    // },
+  setup(props) {
+    const {posts, isPostsLoading, totalPageCount} = usePosts(10);
+    const {selectedSort, sortedPosts} = useSortedPosts(posts);
+    const {searchQuery, searchedAndSelectedPosts} = useSearchedAndSelectedPosts(sortedPosts);
+
+    return {
+      posts, 
+      isPostsLoading, 
+      totalPageCount,
+      selectedSort, 
+      sortedPosts,
+      searchQuery, 
+      searchedAndSelectedPosts,
+    };
   },
   methods: {
     addPost(post) {
@@ -122,26 +116,6 @@ export default {
     },
     paginationClick(pageNumber) {
       this.page = pageNumber;
-    },
-    async fetchPosts() {
-      this.isPostsLoading = true;
-
-      try {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-          params: {
-            _page: this.page,
-            _limit: this.limit,
-          },
-        });
-
-        this.totalPageCount = Math.ceil(response.headers['x-total-count'] / this.limit);
-
-        this.posts = response.data;
-      } catch (error) {
-        console.error('[Axios Error]: ', error);
-      } finally {
-        this.isPostsLoading = false;
-      };
     },
     async loadMorePosts() {
       try {
@@ -161,9 +135,6 @@ export default {
         console.error('[Axios Error]: ', error);
       };
     },
-  },
-  mounted() {
-    this.fetchPosts();
   },
 }
 </script>

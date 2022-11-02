@@ -5,6 +5,7 @@
       <my-input 
         :placeholder="'Name'"
         v-model="post.title"
+        v-custom-focus
       />
       <my-input 
         :placeholder="'Description'"

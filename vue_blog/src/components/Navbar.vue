@@ -4,6 +4,16 @@
     <div class="btns">
       <my-button
         style="margin-right: 20px"
+        @click="$router.push('/composition-posts')"
+      >Composition Posts</my-button>
+
+      <my-button
+        style="margin-right: 20px"
+        @click="$router.push('/store-posts')"
+      >Store Posts</my-button>
+
+      <my-button
+        style="margin-right: 20px"
         @click="$router.push('/posts')"
       >Posts</my-button>
 
